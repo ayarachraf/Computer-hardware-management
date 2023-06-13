@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 import pymysql
+import tkcalendar
 
 
 
@@ -40,16 +41,23 @@ class Material:
         #-------- Tree view------
              #----mainTable ---
         self.treeViewTable = ttk.Treeview(tableFrame,
-        columns=('Id','Type','Name','Ip','Marque',),
+        columns=('Id','Type','Date','Name','Ip','Marque'),
     
         )
         self.treeViewTable.place(x=0,y=5,width='1100',height='725')
         self.treeViewTable['show']='headings'
         self.treeViewTable.heading('Id',text='ID')
         self.treeViewTable.heading('Type',text='TYPE')
+        self.treeViewTable.heading('Date',text='DATE')
         self.treeViewTable.heading('Name',text='NAME')
         self.treeViewTable.heading('Ip',text='IP')
         self.treeViewTable.heading('Marque',text='BRAND')
+        self.treeViewTable.column("Id",minwidth=0,width=95)
+        self.treeViewTable.column("Type",minwidth=0,width=100)
+        self.treeViewTable.column("Name",minwidth=0,width=100)
+        self.treeViewTable.column("Ip",minwidth=0,width=100)
+        self.treeViewTable.column("Marque",minwidth=0,width=100)
+        self.treeViewTable.column("Date",minwidth=0,width=100)
         
 
         
@@ -69,7 +77,8 @@ class Material:
         TypeCB.place(x=120,y=100)
         DateLabel = Label(leftframe,text='Date :',width=10,bg='skyblue')
         DateLabel.place(x=20,y=200)
- 
+        DatEntry = tkcalendar.DateEntry(leftframe,width=29, textvariable=self.dateMaterial)
+        DatEntry.place(x=120,y=200)
         NameLabel = Label(leftframe,text='Name :',width=10,bg='skyblue')
         NameLabel.place(x=20,y=150)
         NameEntry = Entry(leftframe,width=30,textvariable=self.nameMaterial)
@@ -103,25 +112,20 @@ class Material:
         exitButton = Button(leftframe,text='Exit',width=40,bg='#199fc2',borderwidth=1, relief="solid",fg='white')
         exitButton.place(x=20,y=630)
 
-        #----- conecting to database ----
+     #----- conecting to database ----
     def addMaterial(self):
-            con =pymysql.connect(
-                host = 'localhost',
-                user = 'root',
-                password = '',
-                database = 'MaterailInfo')    
-            cur = con.cursor()
-            cur.execute("INSERT INTO Material VALUES(%s,%s,%s,%s,%s)",(
-                                            
-                                            self.markMaterial.get(),
-                                            self.ipMaterial.get(),
-                                            self.nameMaterial.get(),
-                                            self.typeMaterial.get(),
-                                            self.idMaterial.get()
+            mydb = mysql.connector.connect(
+               host="localhost",
+               user="root",
+               password="",
+               database="MaterailInfo")
+               
+            mycursor = mydb.cursor()
 
-                ))
-            con.commit()
-            con.close()
+            sql = "INSERT INTO Material (ID, Type, Date, Name, IP , MARK) VALUES (%s, %s,%s, %s,%s, %s)"
+            val = (self.idMaterial,self.typeMaterial,self.dateMaterial,self.nameMaterial,self.ipMaterial ,self.markMaterial)
+            mycursor.execute(sql, val)
+            mydb.commit()
             
 
 
